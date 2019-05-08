@@ -1,2 +1,5 @@
 pykka
 schedule
+pybitflyer
+websocket-client
+ConfigParser

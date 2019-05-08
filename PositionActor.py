@@ -1,19 +1,22 @@
 import pykka
 import time
-import schedule
 
 
 class PositionActor(pykka.ThreadingActor):
-    def __init__(self, parent_actor_proxy):
+    use_daemon_thread = True
+
+    def __init__(self, parent_actor, api, interval=5):
         super().__init__()
-        self._parent_actor_proxy = parent_actor_proxy
+        self._parent_actor_proxy = parent_actor.proxy()
+        self.api = api
+        self.interval = interval
+        self.actor_ref.proxy().get_my_position()
 
-    def run(self):
-        schedule.every(1/20).minutes.do(self.__get_my_position)
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
-
-    def __get_my_position(self):
-        time.sleep(1)
-        self._parent_actor_proxy.position_result("get my position result = ???")
+    def get_my_position(self):
+        try:
+            result = self.api.getpositions(product_code="FX_BTC_JPY")
+            self._parent_actor_proxy.position_result(result)
+        except Exception as e:
+            pass
+        time.sleep(self.interval)
+        self.actor_ref.proxy().get_my_position()
