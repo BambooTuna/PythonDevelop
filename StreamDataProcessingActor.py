@@ -1,4 +1,5 @@
 import pykka
+import json
 import time
 import StreamActor
 
@@ -19,7 +20,7 @@ class StreamDataProcessingActor(pykka.ThreadingActor):
         self._executions_actor_proxy.run()
 
     def received_data(self, message):
-        self._parent_actor_proxy.stream_api_result(message)
+        self._parent_actor_proxy.stream_api_result(json.loads(message)['params'])
 
     def restart(self, error):
         print("restart", self.__class__.__name__)
