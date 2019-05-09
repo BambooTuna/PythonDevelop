@@ -4,13 +4,16 @@ PythonでのBitflyer用Botのサンプル
 まだいろんな機能を追加していく予定
 
 # 使い方
-他依存ライブラリのインストール
+APIKEYのセット
+- `setting_sample.py`に記述して`setting.py`に名前を変更してください。  
+
+- 他依存ライブラリのインストール
 ```
 $ pip install -r requirements.txt
 ```
 
 
-実行
+- 実行
 ```
 $ python Main.py
 ```
