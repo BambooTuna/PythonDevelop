@@ -1,10 +1,11 @@
-import pykka
+import ActorSupport
+import StreamActor
+import Protocol
 import json
 import time
-import StreamActor
 
 
-class StreamDataProcessingActor(pykka.ThreadingActor):
+class StreamDataProcessingActor(ActorSupport.ActorSupport):
     use_daemon_thread = True
 
     def __init__(self, parent_actor):
@@ -19,11 +20,15 @@ class StreamDataProcessingActor(pykka.ThreadingActor):
     def run(self):
         self._executions_actor_proxy.run()
 
-    def received_data(self, message):
-        self._parent_actor_proxy.stream_api_result(json.loads(message)['params'])
+    def received_data(self, message: str):
+        try:
+            result = map(lambda x: Protocol.LightningExecutions(x), json.loads(message)["params"]["message"])
+            self._parent_actor_proxy.stream_api_result(list(result))
+        except Exception as e:
+            self.logger.error(e)
 
     def restart(self, error):
-        print("restart", self.__class__.__name__)
+        self.logger.error("Restart ErrorReason: " % error)
         time.sleep(5)
         self._executions_actor_proxy.actor_ref.stop()
         self.actor_ref.proxy().create_children_actor()

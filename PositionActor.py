@@ -1,8 +1,9 @@
-import pykka
+import ActorSupport
 import time
+import Protocol
 
 
-class PositionActor(pykka.ThreadingActor):
+class PositionActor(ActorSupport.ActorSupport):
     use_daemon_thread = True
 
     def __init__(self, parent_actor, api, interval=5):
@@ -15,8 +16,8 @@ class PositionActor(pykka.ThreadingActor):
     def get_my_position(self):
         try:
             result = self.api.getpositions(product_code="FX_BTC_JPY")
-            self._parent_actor_proxy.position_result(result)
+            self._parent_actor_proxy.position_result(list(map(lambda x: Protocol.PositionDataResponse(x), result)))
         except Exception as e:
-            pass
+            self.logger.error(e)
         time.sleep(self.interval)
         self.actor_ref.proxy().get_my_position()

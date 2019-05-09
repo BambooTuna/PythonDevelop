@@ -1,8 +1,8 @@
-import pykka
+import ActorSupport
 import WebSocket
 
 
-class StreamActor(pykka.ThreadingActor):
+class StreamActor(ActorSupport.ActorSupport):
     use_daemon_thread = True
 
     def __init__(self, parent_actor, channel="lightning_executions_FX_BTC_JPY"):
