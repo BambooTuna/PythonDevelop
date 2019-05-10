@@ -25,6 +25,8 @@ class PositionActor(ActorSupport.ActorSupport):
                 self._parent_actor_proxy.position_result(list(map(lambda x: Protocol.PositionDataResponse(x), result)))
             except Exception as e:
                 self.logger.error(e)
+        else:
+            self.logger.error(result)
 
         time.sleep(self.interval)
         self.actor_ref.proxy().get_my_position()
