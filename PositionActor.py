@@ -14,10 +14,17 @@ class PositionActor(ActorSupport.ActorSupport):
         self.actor_ref.proxy().get_my_position()
 
     def get_my_position(self):
+        result = None
         try:
             result = self.api.getpositions(product_code="FX_BTC_JPY")
-            self._parent_actor_proxy.position_result(list(map(lambda x: Protocol.PositionDataResponse(x), result)))
         except Exception as e:
             self.logger.error(e)
+
+        if type(result) == list:
+            try:
+                self._parent_actor_proxy.position_result(list(map(lambda x: Protocol.PositionDataResponse(x), result)))
+            except Exception as e:
+                self.logger.error(e)
+
         time.sleep(self.interval)
         self.actor_ref.proxy().get_my_position()

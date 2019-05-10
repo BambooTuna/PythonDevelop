@@ -38,7 +38,7 @@ class MainLogicActor(ActorSupport.ActorSupport):
             max_size += i.size * (1 if i.side == "BUY" else -1)
 
         # 例: 約定履歴で大きい約定が流れてきたとき注文を出す。Jsonパース、条件設定は各自で（時間あったらかく）
-        if abs(max_size) >= 10:
+        if abs(max_size) >= 1000:
             self._order_actor_proxy.send_order(Protocol.OrderDataRequest({
                 "child_order_type": "MARKET",
                 "side": ("BUY" if max_size > 0 else "SELL"),
